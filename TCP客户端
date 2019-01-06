@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<windows.h>
+#include<winsock.h>
+#include<stdlib.h>
+#pragma comment (lib,"ws2_32.lib")
+int main()
+{
+	char str1[100];
+	char str2[100];
+	//初始化套接字
+	WSADATA data;
+	WORD x = MAKEWORD(2, 0);
+	WSAStartup(x, &data);
+
+	//创建套接字库
+	SOCKET s1 = socket(AF_INET, SOCK_STREAM, 0);
+	//绑定地址
+	  //地址和端口的处理
+	sockaddr_in addr1;
+	addr1.sin_family = AF_INET;
+	addr1.sin_port = htons(75);
+	addr1.sin_addr.S_un.S_addr = inet_addr("172.18.5.53");
+	//链接
+	connect(s1, (sockaddr*)&addr1, sizeof(addr1));
+
+	while (1)
+	{
+		//发送数据
+		printf("Please enter your message:");
+		scanf_s("%s", str1, 100);
+		send(s1, str1,sizeof(str1), 0);
+		//接收数据
+		recv(s1, str2,sizeof(str2), 0);
+		printf("server say:%s\n",str2);
+	}
+	closesocket(s1);
+	WSACleanup();
+	system("pause");
+	return 0;
+}
